@@ -12,12 +12,14 @@ import {
 } from '@/lib/data';
 import GoalCard from '@/components/GoalCard';
 import GoalModal from '@/components/GoalModal';
+import ImportModal from '@/components/ImportModal';
 
 export default function GoalsPage() {
   // ----- State -----
   const [goals, setGoals] = useState<GoalArc[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState<GoalArc | undefined>();
   const [isLoaded, setIsLoaded] = useState(false);
   
@@ -110,12 +112,20 @@ export default function GoalsPage() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-foreground">Goal Arcs</h2>
-          <button
-            onClick={handleOpenCreate}
-            className="px-3 py-1.5 text-sm font-medium rounded-lg bg-accent text-background hover:bg-accent-dim transition-colors active:scale-95"
-          >
-            + New
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setIsImportModalOpen(true)}
+              className="px-3 py-1.5 text-sm font-medium rounded-lg bg-secondary/20 text-secondary hover:bg-secondary/30 transition-colors active:scale-95"
+            >
+              📥 Import
+            </button>
+            <button
+              onClick={handleOpenCreate}
+              className="px-3 py-1.5 text-sm font-medium rounded-lg bg-accent text-background hover:bg-accent-dim transition-colors active:scale-95"
+            >
+              + New
+            </button>
+          </div>
         </div>
         
         {/* Goal list */}
@@ -124,12 +134,21 @@ export default function GoalsPage() {
         ) : goals.length === 0 ? (
           <div className="rounded-2xl bg-surface border border-border p-6 text-center">
             <p className="text-muted mb-4">No goals yet. Create your first goal arc!</p>
-            <button
-              onClick={handleOpenCreate}
-              className="text-accent font-medium hover:underline"
-            >
-              Create a goal
-            </button>
+            <div className="flex flex-col gap-2 items-center">
+              <button
+                onClick={handleOpenCreate}
+                className="text-accent font-medium hover:underline"
+              >
+                Create a goal
+              </button>
+              <span className="text-muted text-sm">or</span>
+              <button
+                onClick={() => setIsImportModalOpen(true)}
+                className="text-secondary font-medium hover:underline"
+              >
+                Import from notes
+              </button>
+            </div>
           </div>
         ) : (
           <div className="space-y-3">
@@ -180,6 +199,13 @@ export default function GoalsPage() {
         }}
         onSave={handleSave}
         onDelete={editingGoal ? handleDelete : undefined}
+      />
+      
+      {/* Import modal */}
+      <ImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImportComplete={loadData}
       />
       
       {/* Task assignment modal */}
