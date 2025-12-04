@@ -24,15 +24,16 @@ export interface GoalArc {
   id: string;
   title: string;
   description: string;
-  phases: Phase[];
-  createdAt: Date;
-  updatedAt: Date;
+  targetDate?: string; // ISO date string
+  createdAt: string;   // ISO date string
+  updatedAt: string;   // ISO date string
   isActive: boolean;
 }
 
 /**
  * A Phase is a milestone or chapter within a GoalArc.
  * Each phase has a specific focus and deadline.
+ * (Not used in Phase 1, but kept for future phases)
  */
 export interface Phase {
   id: string;
@@ -40,28 +41,28 @@ export interface Phase {
   title: string;
   description: string;
   order: number;
-  targetDate?: Date;
-  completedAt?: Date;
+  targetDate?: string;   // ISO date string
+  completedAt?: string;  // ISO date string
   isActive: boolean;
 }
 
 /**
  * A Task is a single actionable item.
- * Tasks belong to phases and can be tracked with sessions.
+ * Tasks can be linked to a GoalArc and tracked with sessions.
  */
 export interface Task {
   id: string;
-  phaseId?: string;
+  goalArcId?: string;    // Links task to a goal arc
   title: string;
   description?: string;
   type: TaskType;
   status: TaskStatus;
   estimatedMinutes?: number;
   actualMinutes?: number;
-  dueDate?: Date;
-  completedAt?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  dueDate?: string;      // ISO date string
+  completedAt?: string;  // ISO date string
+  createdAt: string;     // ISO date string
+  updatedAt: string;     // ISO date string
 }
 
 /**
@@ -71,9 +72,18 @@ export interface Task {
 export interface Session {
   id: string;
   taskId: string;
-  startedAt: Date;
-  endedAt?: Date;
+  startedAt: string;      // ISO date string
+  endedAt?: string;       // ISO date string
   durationMinutes?: number;
   notes?: string;
 }
 
+// ----- Helper Types -----
+
+/** Summary stats for a given day */
+export interface DaySummary {
+  date: string;           // YYYY-MM-DD format
+  totalMinutes: number;
+  tasksCompleted: number;
+  sessions: Session[];
+}
